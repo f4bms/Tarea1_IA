@@ -3,9 +3,7 @@
 ## Ejecución de pruebas:
 
 ```bash
-# Desde la raíz:
-python -m pytest motor/test_motor.py -v
-
-# desde la carpeta de motor
-cd motor && python test_motor.py
-```
+make test # corre toda las pruenas
+make test-motor # solo tests del motor
+make test-search # solo tests del agente de búsqueda
+make run # agrente de busqueda usando el txt
