@@ -1,25 +1,4 @@
-"""Agente evolutivo para TileUp (algoritmo genético generacional con elitismo).
 
-Formulación
------------
-- Individuo: vector de M genes enteros en [0, N*N). El gen i es la celda
-  "preferida" (fila = g // N, col = g % N) para la ficha i de la secuencia.
-- Decodificación: se juega la partida con el motor. Si la celda preferida
-  está vacía se usa; si no, se toma vacias[g % len(vacias)]. Así todo
-  individuo produce siempre una partida legal y no hace falta reparar.
-- Aptitud (a maximizar): colocadas * (N*N + 1) - ocupadas_al_final.
-  Como ocupadas <= N*N, una ficha colocada más siempre pesa más que
-  cualquier diferencia de celdas ocupadas: replica el orden del concurso.
-- Selección: torneo de tamaño k.
-- Variación: cruce de un punto (prob. pc) + mutación por gen (prob. pm),
-  que reemplaza el gen por una celda aleatoria.
-- Reemplazo: generacional con elitismo (los e mejores pasan intactos).
-- Paro: límite de tiempo, máximo de generaciones, estancamiento, o cota
-  inferior alcanzada (todas colocadas y ocupadas == colores distintos).
-
-El agente solo usa la API pública del motor (estado_inicial, aplicar,
-acciones, métricas); no altera ninguna regla del juego.
-"""
 
 import random
 import sys
@@ -28,20 +7,18 @@ import time
 import motor as m
 
 
-# Valores fijados con un barrido de parámetros (ver README, sección "Ajuste de parámetros").
 PARAMETROS_POR_DEFECTO = {
     "poblacion": 120,
     "torneo": 2,
     "prob_cruce": 1.0,
-    "prob_mutacion": None,   # None => 0.5 / M
+    "prob_mutacion": None,   
     "elitismo": 2,
-    "fraccion_voraz": 0.5,   # fracción de la población inicial sembrada con la heurística voraz
+    "fraccion_voraz": 0.5,  
     "max_generaciones": 100000,
-    "estancamiento": 300,    # generaciones sin mejorar antes de parar
+    "estancamiento": 300,  
 }
 
-MARGEN_TIEMPO = 0.9  # se usa como máximo el 90 % del límite para entregar a tiempo
-
+MARGEN_TIEMPO = 0.9 
 
 class _Tiempo(Exception):
     """Se lanza internamente cuando se acaba el tiempo a mitad de una evaluación."""
@@ -52,11 +29,7 @@ class _Tiempo(Exception):
 # ---------------------------------------------------------------------------
 
 def decodificar(genes, N, K, secuencia, fin=None):
-    """Juega la partida que codifica el individuo.
-
-    Devuelve (movimientos, estado_final). Si se llena el tablero, la partida
-    se corta ahí (derrota) y los genes restantes no se usan.
-    """
+    
     estado = m.estado_inicial(N, K, secuencia)
     movimientos = []
     for i, g in enumerate(genes):
@@ -82,12 +55,7 @@ def aptitud_de(estado, N):
 # ---------------------------------------------------------------------------
 
 def _individuo_voraz(N, K, secuencia, rng, epsilon, fin=None):
-    """Construye un individuo con una heurística voraz de un paso.
-
-    Para cada ficha prefiere la celda vacía con más vecinos del mismo color
-    (provoca fusión); desempata al azar. Con prob. epsilon elige al azar,
-    para que las semillas voraces no sean todas idénticas.
-    """
+   
     estado = m.estado_inicial(N, K, secuencia)
     genes, movimientos = [], []
     for i, (color, _) in enumerate(secuencia):
@@ -115,8 +83,7 @@ def _individuo_voraz(N, K, secuencia, rng, epsilon, fin=None):
         genes.append(celda[0] * N + celda[1])
         movimientos.append((i, celda[0], celda[1]))
         estado = m.aplicar(estado, celda)
-    # Decodificar estos genes reproduce exactamente esta partida, así que se
-    # devuelve ya jugada y cuenta como una evaluación (no se repite el trabajo).
+   
     return genes, movimientos, estado
 
 
@@ -152,10 +119,7 @@ def _mutar(genes, pm, celdas, rng):
 # ---------------------------------------------------------------------------
 
 def resolver(N, K, secuencia, semilla, limite_tiempo, parametros=None):
-    """Ejecuta el algoritmo genético y devuelve un dict con la mejor solución.
-
-    Claves: movimientos, estado, evaluaciones, generaciones, tiempo, aptitud.
-    """
+  
     inicio = time.perf_counter()
     fin = inicio + limite_tiempo * MARGEN_TIEMPO
     p = dict(PARAMETROS_POR_DEFECTO)
@@ -182,10 +146,8 @@ def resolver(N, K, secuencia, semilla, limite_tiempo, parametros=None):
 
     generaciones = 0
     try:
-        # Población inicial: una fracción voraz, el resto aleatoria.
         n_voraz = max(1, int(p["poblacion"] * p["fraccion_voraz"]))
-        # Cada individuo se evalúa apenas se crea: si el tiempo se agota aquí,
-        # ya hay una solución registrada (la voraz pura es la primera).
+      
         poblacion, aptitudes = [], []
         for i in range(p["poblacion"]):
             if i < n_voraz:
@@ -225,10 +187,9 @@ def resolver(N, K, secuencia, semilla, limite_tiempo, parametros=None):
             else:
                 sin_mejora += 1
     except _Tiempo:
-        pass  # se acabó el tiempo: se entrega el mejor encontrado
+        pass
 
     if mejor["estado"] is None:
-        # No alcanzó a evaluar ningún individuo: respaldo inmediato (siempre legal).
         mejor["movimientos"], mejor["estado"] = decodificar([0] * M, N, K, secuencia)
 
     movimientos, estado = mejor["movimientos"], mejor["estado"]
@@ -250,8 +211,7 @@ def imprimir_metricas(res):
           f"generaciones={res['generaciones']}")
 
 
-# Uso (desde la raíz del repo):
-#   python3 -m evolutivo.evolutivo <instancia> <semilla> <limite_s> [salida]
+
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         print("uso: python3 -m evolutivo.evolutivo <instancia> <semilla> <limite_s> [salida]",
