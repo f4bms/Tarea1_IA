@@ -67,8 +67,13 @@ def buscar(estado_inicial, limite_tiempo, limite_nodos=None):
             break
 
         nodos_expandidos += 1
+        tiempo_agotado = False
 
         for celda in motor.acciones(estado):
+            if time.monotonic() - inicio_reloj >= limite_tiempo:
+                tiempo_agotado = True
+                break
+
             hijo_estado = motor.aplicar(estado, celda)
             clave_hijo = _clave_estado(hijo_estado)
 
@@ -86,6 +91,9 @@ def buscar(estado_inicial, limite_tiempo, limite_nodos=None):
 
             hijo_nodo = NodoBusqueda(hijo_estado, nodo, celda, nodo.profundidad + 1)
             heapq.heappush(frontera, (_heuristica(hijo_estado), next(contador), hijo_nodo))
+
+        if tiempo_agotado:
+            break
 
     tiempo_usado = time.monotonic() - inicio_reloj
     camino = _reconstruir_camino(mejor_nodo)

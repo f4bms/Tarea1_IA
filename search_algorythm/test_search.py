@@ -1,9 +1,14 @@
 import os
+import sys
+import tempfile
 import time
 import unittest
 
 import motor
 import search_algorythm.searchAlgo as searchAlgo
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import validador
 
 INSTANCIA_EJEMPLO = os.path.join(os.path.dirname(__file__), "..", "instancias", "ejemplo.txt")
 
@@ -71,6 +76,34 @@ class TestBuscarLimites(unittest.TestCase):
         estado, _ = _estado_ejemplo()
         res = searchAlgo.buscar(estado, limite_tiempo=5.0)
         self.assertGreater(res["nodos_expandidos"], 0)
+
+
+class TestIntegracionValidador(unittest.TestCase):
+    def test_busqueda_produce_solucion_legal(self):
+        estado, _ = _estado_ejemplo()
+        res = searchAlgo.buscar(estado, limite_tiempo=5.0)
+        movimientos = [(i, f, c) for i, (f, c) in enumerate(res["camino"])]
+
+        fd, ruta_sol = tempfile.mkstemp(suffix=".txt")
+        os.close(fd)
+        try:
+            motor.escribir_solucion(ruta_sol, movimientos, res["estado_final"])
+            es_legal = validador.validar(INSTANCIA_EJEMPLO, ruta_sol)
+            self.assertTrue(es_legal)
+        finally:
+            os.unlink(ruta_sol)
+
+    def test_solucion_ilegal_es_rechazada(self):
+        fd, ruta_sol = tempfile.mkstemp(suffix=".txt")
+        os.close(fd)
+        try:
+            with open(ruta_sol, "w") as f:
+                f.write("0 99 99\n# colocadas=1 ocupadas=1 mayor=1\n")
+            with self.assertRaises(SystemExit) as ctx:
+                validador.validar(INSTANCIA_EJEMPLO, ruta_sol)
+            self.assertNotEqual(ctx.exception.code, 0)
+        finally:
+            os.unlink(ruta_sol)
 
 
 if __name__ == "__main__":
