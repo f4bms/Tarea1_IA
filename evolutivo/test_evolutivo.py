@@ -3,12 +3,18 @@
 Ejecutar desde la raíz del repo:  make test-evolutivo
 """
 
+import os
 import random
+import sys
+import tempfile
 import time
 import unittest
 
 import motor as m
 from evolutivo import evolutivo as ev
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import validador
 
 EJEMPLO = (4, 3, ((1, 2), (2, 1), (1, 3), (3, 1), (1, 1), (2, 4)))
 
@@ -95,6 +101,36 @@ class TestAgente(unittest.TestCase):
         solo_voraz = ev.resolver(N, K, sec, 1, 5, {"max_generaciones": 0})
         completo = ev.resolver(N, K, sec, 1, 5, {"max_generaciones": 50})
         self.assertGreaterEqual(completo["aptitud"], solo_voraz["aptitud"])
+
+
+INSTANCIA_EJEMPLO = os.path.join(os.path.dirname(__file__), "..", "instancias", "ejemplo.txt")
+
+
+class TestIntegracionValidador(unittest.TestCase):
+
+    def test_evolutivo_produce_solucion_legal(self):
+        N, K, sec = EJEMPLO
+        res = ev.resolver(N, K, sec, semilla=1, limite_tiempo=2)
+        fd, ruta_sol = tempfile.mkstemp(suffix=".txt")
+        os.close(fd)
+        try:
+            m.escribir_solucion(ruta_sol, res["movimientos"], res["estado"])
+            es_legal = validador.validar(INSTANCIA_EJEMPLO, ruta_sol)
+            self.assertTrue(es_legal)
+        finally:
+            os.unlink(ruta_sol)
+
+    def test_solucion_ilegal_es_rechazada(self):
+        fd, ruta_sol = tempfile.mkstemp(suffix=".txt")
+        os.close(fd)
+        try:
+            with open(ruta_sol, "w") as f:
+                f.write("0 99 99\n# colocadas=1 ocupadas=1 mayor=1\n")
+            with self.assertRaises(SystemExit) as ctx:
+                validador.validar(INSTANCIA_EJEMPLO, ruta_sol)
+            self.assertNotEqual(ctx.exception.code, 0)
+        finally:
+            os.unlink(ruta_sol)
 
 
 if __name__ == "__main__":
