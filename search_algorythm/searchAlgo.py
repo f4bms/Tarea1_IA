@@ -1,4 +1,3 @@
-import gc
 import heapq
 import itertools
 import time
@@ -36,11 +35,12 @@ def _reconstruir_camino(nodo):
 
 def buscar(estado_inicial, limite_tiempo, limite_nodos=None):
     inicio_reloj = time.monotonic()
+    fin = inicio_reloj + limite_tiempo * 0.98
 
     raiz = NodoBusqueda(estado=estado_inicial, padre=None, celda=None, profundidad=0)
 
     contador = itertools.count()
-    frontera = [(_heuristica(estado_inicial), next(contador), raiz)]
+    frontera = [(_heuristica(estado_inicial), 0, next(contador), raiz)]
 
     visitados = {_clave_estado(estado_inicial)}
     nodos_expandidos = 0
@@ -51,55 +51,50 @@ def buscar(estado_inicial, limite_tiempo, limite_nodos=None):
         b = (motor.fichas_colocadas(nodo.estado), -motor.celdas_ocupadas(nodo.estado))
         return a > b
 
-    gc.disable()
-    try:
-        while frontera:
-            if time.monotonic() - inicio_reloj >= limite_tiempo:
+    while frontera:
+        if time.monotonic() >= fin:
+            break
+        if limite_nodos is not None and nodos_expandidos >= limite_nodos:
+            break
+
+        _, _, _, nodo = heapq.heappop(frontera)
+        estado = nodo.estado
+
+        if es_mejor(mejor_nodo, nodo):
+            mejor_nodo = nodo
+
+        if motor.es_meta(estado):
+            mejor_nodo = nodo
+            break
+
+        nodos_expandidos += 1
+        tiempo_agotado = False
+
+        for i, celda in enumerate(motor.acciones(estado)):
+            if (i & 15) == 0 and time.monotonic() >= fin:
+                tiempo_agotado = True
                 break
-            if limite_nodos is not None and nodos_expandidos >= limite_nodos:
-                break
 
-            _, _, nodo = heapq.heappop(frontera)
-            estado = nodo.estado
+            hijo_estado = motor.aplicar(estado, celda)
+            clave_hijo = _clave_estado(hijo_estado)
 
-            if es_mejor(mejor_nodo, nodo):
-                mejor_nodo = nodo
+            if motor.es_derrota(hijo_estado):
+                if clave_hijo not in visitados:
+                    visitados.add(clave_hijo)
+                    hijo_nodo = NodoBusqueda(hijo_estado, nodo, celda, nodo.profundidad + 1)
+                    if es_mejor(mejor_nodo, hijo_nodo):
+                        mejor_nodo = hijo_nodo
+                continue
 
-            if motor.es_meta(estado):
-                mejor_nodo = nodo
-                break
+            if clave_hijo in visitados:
+                continue
+            visitados.add(clave_hijo)
 
-            nodos_expandidos += 1
-            tiempo_agotado = False
+            hijo_nodo = NodoBusqueda(hijo_estado, nodo, celda, nodo.profundidad + 1)
+            heapq.heappush(frontera, (_heuristica(hijo_estado), -hijo_nodo.profundidad, next(contador), hijo_nodo))
 
-            for celda in motor.acciones(estado):
-                if time.monotonic() - inicio_reloj >= limite_tiempo:
-                    tiempo_agotado = True
-                    break
-
-                hijo_estado = motor.aplicar(estado, celda)
-                clave_hijo = _clave_estado(hijo_estado)
-
-                if motor.es_derrota(hijo_estado):
-                    if clave_hijo not in visitados:
-                        visitados.add(clave_hijo)
-                        hijo_nodo = NodoBusqueda(hijo_estado, nodo, celda, nodo.profundidad + 1)
-                        if es_mejor(mejor_nodo, hijo_nodo):
-                            mejor_nodo = hijo_nodo
-                    continue
-
-                if clave_hijo in visitados:
-                    continue
-                visitados.add(clave_hijo)
-
-                hijo_nodo = NodoBusqueda(hijo_estado, nodo, celda, nodo.profundidad + 1)
-                heapq.heappush(frontera, (_heuristica(hijo_estado), next(contador), hijo_nodo))
-
-            if tiempo_agotado:
-                break
-    finally:
-        gc.enable()
-        gc.collect()
+        if tiempo_agotado:
+            break
 
     tiempo_usado = time.monotonic() - inicio_reloj
     camino = _reconstruir_camino(mejor_nodo)
