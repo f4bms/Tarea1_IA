@@ -100,16 +100,18 @@ def buscar(estado_inicial, limite_tiempo, limite_nodos=None):
 
 
 if __name__ == "__main__":
-    N, K = 4, 3
-    secuencia = ((1, 2), (2, 1), (1, 3), (3, 1), (1, 1), (2, 4))
-    estado0 = motor.estado_inicial(N, K, secuencia)
+    import sys
+    if len(sys.argv) >= 3:
+        # mini-CLI directo: searchAlgo.py <instancia> <tiempo_s>
+        N, K, sec = motor.cargar_instancia(sys.argv[1])
+        limite = float(sys.argv[2])
+        res = buscar(motor.estado_inicial(N, K, sec), limite_tiempo=limite)
+    else:
+        N, K = 4, 3
+        sec = ((1, 2), (2, 1), (1, 3), (3, 1), (1, 1), (2, 4))
+        res = buscar(motor.estado_inicial(N, K, sec), limite_tiempo=5.0)
 
-    resultado = buscar(estado0, limite_tiempo=5.0)
-
-    print("Camino jugado:", resultado["camino"])
-    print("Meta alcanzada:", resultado["meta_alcanzada"])
-    print("Fichas colocadas:", motor.fichas_colocadas(resultado["estado_final"]))
-    print("Celdas ocupadas:", motor.celdas_ocupadas(resultado["estado_final"]))
-    print("Ficha mayor:", motor.ficha_mayor(resultado["estado_final"]))
-    print("Nodos expandidos:", resultado["nodos_expandidos"])
-    print(f"Tiempo usado: {resultado['tiempo_usado']:.4f}s")
+    e = res["estado_final"]
+    print(f"agente=busqueda colocadas={motor.fichas_colocadas(e)} "
+          f"ocupadas={motor.celdas_ocupadas(e)} mayor={motor.ficha_mayor(e)} "
+          f"tiempo={res['tiempo_usado']:.3f}s nodos={res['nodos_expandidos']}")

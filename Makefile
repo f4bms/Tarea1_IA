@@ -18,10 +18,13 @@ test-evolutivo:
 	python3 -m unittest evolutivo.test_evolutivo -v
 
 run:
-	python3 -m search_algorythm.searchAlgo
+	python3 main.py $(INSTANCIA) busqueda $(SEMILLA) $(TIEMPO) solucion_busqueda.txt
 
 run-evolutivo:
-	python3 -m evolutivo.evolutivo $(INSTANCIA) $(SEMILLA) $(TIEMPO) $(SALIDA)
+	python3 main.py $(INSTANCIA) evolutivo $(SEMILLA) $(TIEMPO) $(SALIDA)
+
+validar:
+	python3 validador.py $(INSTANCIA) solucion_busqueda.txt
 
 # ---------------------------------------------------------------------------
 # Módulo de escalabilidad
