@@ -29,10 +29,12 @@ make run INSTANCIA=instancias/ejemplo.txt SEMILLA=42 TIEMPO=30 SALIDA=sol.txt
 ## Pruebas
 
 ```bash
-make test           # motor + búsqueda + evolutivo (todos)
+make test           # motor + búsqueda + evolutivo + escalabilidad (todos)
 make test-motor
 make test-search
 make test-evolutivo
+make test-escalabilidad
+make notebook       # también se puede configurar para ejecutarlo en vs code
 ```
 
 ---
