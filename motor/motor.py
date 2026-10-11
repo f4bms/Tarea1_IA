@@ -46,7 +46,7 @@ def cargar_instancia(ruta):
 
     lineas = []
     for lineanum, linea in enumerate(lineas_crudas, start=1):
-        contenido = linea.strip()
+        contenido = linea.split("#", 1)[0].strip()
         if contenido == "" or contenido.startswith("#"):
             continue
         lineas.append((lineanum, contenido))
