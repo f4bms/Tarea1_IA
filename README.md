@@ -25,6 +25,7 @@ Con Make:
 make run            # búsqueda sobre instancias/ejemplo.txt
 make run-evolutivo  # evolutivo sobre instancias/ejemplo.txt
 make validar        # valida solucion_busqueda.txt
+make escalabilidad
 make test           # corre todos los tests
 ```
 
@@ -41,6 +42,7 @@ make test             # motor + búsqueda + evolutivo (todos)
 make test-motor
 make test-search
 make test-evolutivo
+make test-escalabilidad
 ```
 
 ---

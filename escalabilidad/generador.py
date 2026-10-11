@@ -6,10 +6,6 @@ Produce archivos en el formato de la especificación:
 Los colores se sortean de forma uniforme en 1..K y los valores en 1..vmax.
 Todo el azar sale de random.Random(semilla), así que la misma combinación de
 parámetros produce siempre el mismo archivo.
-
-Uso:
-    python3 -m escalabilidad.generador N K M SEMILLA [salida] [--vmax 9]
-    (sin salida, la instancia se imprime por salida estándar)
 """
 
 # --- permite correr el archivo directo o desde otra carpeta -------------------
@@ -23,8 +19,6 @@ if not _os.path.isdir(_os.path.join(_RAIZ, "motor")):
     _sys.exit("Error: no se encuentra la carpeta 'motor' junto a 'escalabilidad'.\n"
               "La carpeta escalabilidad/ debe estar en la raiz del repositorio, al mismo\n"
               f"nivel que motor/, evolutivo/ y search_algorythm/ (ahora esta en {_RAIZ}).")
-# -----------------------------------------------------------------------------
-
 
 import argparse
 import os

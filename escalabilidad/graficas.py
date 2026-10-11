@@ -11,11 +11,8 @@ Lee el resultados.csv que produce escalabilidad.bateria y genera:
                               dentro del límite, por (N, K)
   * resumen.csv               media y desviación estándar por agente, N y K
 
-Los puntos son la media entre semillas y las barras el rango (mín.–máx.) entre semillas;
-la tabla resumen reporta además la desviación estándar.
+La tabla resumen reporta además la desviación estándar.
 
-Uso:
-    python3 -m escalabilidad.graficas [ruta_resultados.csv] [carpeta_graficas]
 El notebook analisis.ipynb importa estas mismas funciones.
 """
 
@@ -30,8 +27,6 @@ if not _os.path.isdir(_os.path.join(_RAIZ, "motor")):
     _sys.exit("Error: no se encuentra la carpeta 'motor' junto a 'escalabilidad'.\n"
               "La carpeta escalabilidad/ debe estar en la raiz del repositorio, al mismo\n"
               f"nivel que motor/, evolutivo/ y search_algorythm/ (ahora esta en {_RAIZ}).")
-# -----------------------------------------------------------------------------
-
 
 import math
 import os
@@ -201,7 +196,7 @@ def figura_tendencia(df, metrica, x="N", serie="K", log=False, titulo=None,
             ax.set_ylabel(et)
         ax.margins(x=0.14)
 
-    # etiquetas directas al final de cada línea, separadas para que no se pisen
+    # etiquetas directas al final de cada línea, separadas para que no se solapen
     if len(valores_serie) <= 4:
         for ax, puntos in finales.items():
             ax.autoscale_view()
@@ -311,7 +306,7 @@ def guardar_todo(ruta_csv, carpeta):
 
 
 # ---------------------------------------------------------------------------
-# Lectura automática (apoyo para escribir el informe; no lo reemplaza)
+# Lectura automática (apoyo para escribir el informe)
 # ---------------------------------------------------------------------------
 
 def _crecimiento(df, agente, param, otro):

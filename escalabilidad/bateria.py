@@ -12,11 +12,6 @@ semillas por configuración. Para cada (N, K, semilla):
 Cada corrida se ejecuta en un proceso nuevo, de modo que la memoria de la
 búsqueda (que guarda todos los estados visitados) no contamina a la siguiente y
 el pico de memoria de cada corrida se puede medir por separado.
-
-Uso típico (desde la raíz del repositorio):
-    python3 -m escalabilidad.bateria                 # batería completa por defecto
-    python3 -m escalabilidad.bateria --rapida        # versión corta para probar
-    python3 -m escalabilidad.bateria --N 4 6 8 --K 4 8 12 --semillas 1 2 3 --limite 10
 """
 
 # --- permite correr el archivo directo o desde otra carpeta -------------------
@@ -30,8 +25,6 @@ if not _os.path.isdir(_os.path.join(_RAIZ, "motor")):
     _sys.exit("Error: no se encuentra la carpeta 'motor' junto a 'escalabilidad'.\n"
               "La carpeta escalabilidad/ debe estar en la raiz del repositorio, al mismo\n"
               f"nivel que motor/, evolutivo/ y search_algorythm/ (ahora esta en {_RAIZ}).")
-# -----------------------------------------------------------------------------
-
 
 import argparse
 import csv
@@ -104,8 +97,7 @@ def rejugar(N, K, secuencia, movimientos):
 def _memoria_mb():
     if resource is None:
         return ""
-    pico = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    # Linux reporta KiB; macOS reporta bytes
+    pico = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss # retorna KiB
     return round(pico / (1024 * 1024) if sys.platform == "darwin" else pico / 1024, 1)
 
 
@@ -149,8 +141,8 @@ def _correr_evolutivo(N, K, secuencia, limite, semilla):
 def correr_trabajo(trabajo):
     """Corre un agente sobre una instancia y devuelve la fila del CSV."""
     agente, N, K, M, semilla, limite, ruta_inst, ruta_sol = trabajo
-    # se lee del archivo, igual que haría el programa principal
-    _, _, secuencia = motor.cargar_instancia(ruta_inst)
+    
+    _, _, secuencia = motor.cargar_instancia(ruta_inst) # se lee del archivo
 
     if agente == "busqueda":
         r = _correr_busqueda(N, K, secuencia, limite)
@@ -241,7 +233,7 @@ def ejecutar(cfg, reanudar=False, procesos=1, verbose=True):
         if modo == "w":
             escritor.writeheader()
         # maxtasksperchild=1: un proceso nuevo por corrida (memoria y tiempos limpios)
-        # spawn: mismo comportamiento en Linux, macOS y Windows
+        # spawn: mismo comportamiento independientemente del SO
         contexto = mp.get_context("spawn")
         with contexto.Pool(processes=procesos, maxtasksperchild=1) as pool:
             for i, fila in enumerate(pool.imap_unordered(correr_trabajo, pendientes), 1):
