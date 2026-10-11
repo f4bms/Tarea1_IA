@@ -96,7 +96,7 @@ Una línea por colocación: `índice fila columna` (todos desde cero). Última l
 | **Derrota** | Quedan fichas y el tablero está lleno |
 | **Heurística** | `h(n) = celdas_ocupadas(n) − fichas_colocadas(n)` |
 
-**Sobre la heurística:** mide cuántas celdas "extra" están ocupadas en relación con las fichas ya colocadas. Si cada ficha se fusiona al colocarse, la diferencia baja (o es negativa); si no hay fusiones, sube. El algoritmo prefiere estados con mayor número de fusiones pasadas.
+**Sobre la heurística:** mide cuántas celdas extra están ocupadas en relación con las fichas ya colocadas. Si cada ficha se fusiona al colocarse, la diferencia baja (o es negativa); si no hay fusiones, sube. El algoritmo prefiere estados con mayor número de fusiones pasadas.
 
 La heurística **no es admisible** porque no intenta subestimar el costo restante hasta la meta: prioriza estados con más fusiones acumuladas, no estados más "cercanos" en número de pasos. La garantía que se pierde es la optimalidad: el agente puede no encontrar la solución con el menor número de celdas ocupadas, pero en la práctica guía la búsqueda de forma eficiente hacia partidas con pocas fichas en el tablero.
 
@@ -160,22 +160,22 @@ Valores: media ± desviación estándar de las 3 semillas. Éxitos = semillas en
 
 | N | K | M | éxitos | colocadas | ocupadas | tiempo (s) | nodos |
 |---|---|---|---|---|---|---|---|
-| 4 | 4 | 32 | 3/3 | 32.0 ± 0.0 | 4.0 ± 0.0 | 0.01 ± 0.01 | 277 ± 210 |
-| 4 | 8 | 32 | 3/3 | 32.0 ± 0.0 | 10.3 ± 1.2 | 1.82 ± 2.92 | 17170 ± 26185 |
-| 4 | 12 | 32 | 3/3 | 32.0 ± 0.0 | 15.7 ± 0.6 | 2.02 ± 3.11 | 23678 ± 27541 |
-| 4 | 16 | 32 | 2/3 | 31.3 ± 1.2 | 16.0 ± 0.0 | 3.70 ± 6.11 | 117187 ± 196354 |
-| 6 | 4 | 72 | 3/3 | 72.0 ± 0.0 | 4.0 ± 0.0 | 0.26 ± 0.26 | 1344 ± 1189 |
-| 6 | 8 | 72 | 1/3 | 26.0 ± 39.8 | 5.3 ± 4.0 | 6.82 ± 5.69 | 27541 ± 22684 |
-| 6 | 12 | 72 | 2/3 | 49.0 ± 39.8 | 16.7 ± 11.8 | 7.02 ± 5.18 | 29317 ± 21361 |
-| 6 | 16 | 72 | 1/3 | 37.0 ± 34.5 | 16.7 ± 14.6 | 8.14 ± 3.22 | 35532 ± 15191 |
-| 8 | 4 | 128 | 3/3 | 128.0 ± 0.0 | 4.0 ± 0.0 | 1.71 ± 1.72 | 4182 ± 3905 |
-| 8 | 8 | 128 | 1/3 | 44.7 ± 72.2 | 5.7 ± 4.6 | 7.83 ± 5.26 | 18582 ± 12325 |
-| 8 | 12 | 128 | 1/3 | 44.7 ± 72.2 | 9.7 ± 11.5 | 9.64 ± 1.87 | 22893 ± 4858 |
-| 8 | 16 | 128 | 0/3 | 10.0 ± 12.1 | 6.3 ± 5.8 | 10.59 ± 0.53 | 24679 ± 1766 |
-| 10 | 4 | 200 | 2/3 | 134.7 ± 113.2 | 3.7 ± 0.6 | 5.92 ± 5.41 | 8691 ± 7648 |
-| 10 | 8 | 200 | 1/3 | 68.7 ± 113.7 | 6.3 ± 5.8 | 9.22 ± 2.39 | 14319 ± 3389 |
-| 10 | 12 | 200 | 0/3 | 4.7 ± 2.9 | 4.0 ± 1.7 | 10.18 ± 0.32 | 14657 ± 1463 |
-| 10 | 16 | 200 | 0/3 | 9.7 ± 11.5 | 6.0 ± 5.2 | 10.27 ± 0.26 | 15521 ± 1418 |
+| 4 | 4 | 32 | 3/3 | 32.0 ± 0.0 | 4.0 ± 0.0 | 0.00 ± 0.00 | 32 ± 0 |
+| 4 | 8 | 32 | 3/3 | 32.0 ± 0.0 | 12.7 ± 3.2 | 0.00 ± 0.00 | 34 ± 3 |
+| 4 | 12 | 32 | 3/3 | 32.0 ± 0.0 | 15.3 ± 0.6 | 2.42 ± 2.32 | 169702 ± 158743 |
+| 4 | 16 | 32 | 2/3 | 29.7 ± 4.0 | 16.0 ± 0.0 | 3.35 ± 5.58 | 219983 ± 362018 |
+| 6 | 4 | 72 | 3/3 | 72.0 ± 0.0 | 4.3 ± 0.6 | 0.01 ± 0.00 | 72 ± 0 |
+| 6 | 8 | 72 | 3/3 | 72.0 ± 0.0 | 11.0 ± 1.0 | 0.01 ± 0.00 | 72 ± 0 |
+| 6 | 12 | 72 | 3/3 | 72.0 ± 0.0 | 31.0 ± 5.6 | 0.61 ± 1.04 | 26956 ± 46565 |
+| 6 | 16 | 72 | 2/3 | 70.7 ± 2.3 | 34.7 ± 1.2 | 3.27 ± 5.65 | 138057 ± 238997 |
+| 8 | 4 | 128 | 3/3 | 128.0 ± 0.0 | 4.7 ± 0.6 | 0.03 ± 0.00 | 128 ± 0 |
+| 8 | 8 | 128 | 3/3 | 128.0 ± 0.0 | 14.3 ± 2.3 | 0.03 ± 0.00 | 128 ± 0 |
+| 8 | 12 | 128 | 3/3 | 128.0 ± 0.0 | 29.0 ± 5.6 | 0.04 ± 0.00 | 128 ± 0 |
+| 8 | 16 | 128 | 3/3 | 128.0 ± 0.0 | 55.3 ± 8.5 | 0.34 ± 0.52 | 10315 ± 17644 |
+| 10 | 4 | 200 | 3/3 | 200.0 ± 0.0 | 5.0 ± 1.0 | 0.08 ± 0.00 | 200 ± 0 |
+| 10 | 8 | 200 | 3/3 | 200.0 ± 0.0 | 14.0 ± 2.6 | 0.11 ± 0.01 | 200 ± 0 |
+| 10 | 12 | 200 | 3/3 | 200.0 ± 0.0 | 33.0 ± 7.2 | 0.14 ± 0.01 | 200 ± 0 |
+| 10 | 16 | 200 | 3/3 | 200.0 ± 0.0 | 52.7 ± 18.0 | 0.16 ± 0.02 | 200 ± 0 |
 
 **Agente evolutivo** (esfuerzo = evaluaciones de aptitud)
 
@@ -214,23 +214,23 @@ En las gráficas, el punto es la media entre semillas y la barra es el rango (m�
 
 **¿Qué parámetro domina el costo?**
 
-En la **búsqueda** ninguno de los dos actúa solo: N fija el tamaño del problema y K decide si la heurística sirve. N define el factor de ramificación (una acción por celda vacía, hasta N²) y la profundidad (M = 2·N²). La heurística *ocupadas − colocadas* solo baja cuando hay fusión. Con pocos colores casi toda jugada fusiona y la búsqueda va directo a la meta (N=8, K=4: 1.7 s). Con muchos colores casi ningún hijo fusiona, muchos empatan en la heurística y la búsqueda se comporta casi como una búsqueda en anchura. Partiendo de N=4, K=4, subir N a 10 multiplica el tiempo por ~499 y subir K a 16, por ~312. En el **evolutivo** domina K: con K ≤ 8 la población inicial voraz ya alcanza la cota óptima (una celda por color) y se detiene tras 120 evaluaciones. Su tiempo solo crece linealmente con N, por el costo de jugar cada partida. Con K ≥ 12 la cota casi nunca se alcanza enseguida, así que corre hasta que deja de mejorar: miles de evaluaciones y de 1 a 6 s.
+En la **búsqueda**, el desempate por profundidad en la cola de prioridad hace que, cuando la heurística no discrimina (h = 0 para todos los hijos, sin fusión), el agente avance en línea recta hacia la meta. Con K ≤ 12 la búsqueda expande exactamente M nodos (uno por ficha) y termina en menos de 0.15 s incluso en N = 10. Solo con K = 16 y tableros pequeños (N ≤ 6) la búsqueda necesita ramificar, porque la frontera se agota antes de colocar todas las fichas y debe retroceder. En el **evolutivo** domina K: con K ≤ 8 la población inicial voraz ya alcanza la cota óptima (una celda por color) y se detiene tras 120 evaluaciones. Su tiempo solo crece linealmente con N, por el costo de jugar cada partida. Con K ≥ 12 la cota casi nunca se alcanza enseguida, así que corre hasta que deja de mejorar: miles de evaluaciones y de 1 a 6 s.
 
-**¿Dónde deja la búsqueda de terminar dentro del límite?**
+**¿Dónde falla la búsqueda?**
 
-Con K = 4 aguanta hasta N = 8 y falla en N = 10 (1 de 3 semillas). Con K = 8 y K = 12 falla desde N = 6, y con K = 16 ya falla en N = 4. Los 22 fallos son por tiempo. El quiebre es abrupto y depende mucho de la secuencia: por ejemplo, N=6, K=8 coloca 26.0 ± 39.8 de 72 fichas. Cuando se corta, entrega una solución con muy pocas fichas (4.7 de 200 en N=10, K=12).
+De las 48 corridas, la búsqueda completa la secuencia en 46 (96 %). Solo falla en 2 casos: N=4 K=16 s=3 (25/32 fichas) y N=6 K=16 s=1 (68/72 fichas). Ambos fallos son por frontera vacía (el espacio de búsqueda se agota), no por tiempo. En esas corridas el agente consume 9.8 s explorando cientos de miles de nodos antes de quedarse sin estados por expandir. El quiebre ocurre con K = 16 y tableros chicos, donde hay demasiados colores para el espacio disponible y casi ninguna secuencia de colocaciones evita llenar el tablero.
 
 **¿Cómo se comporta el evolutivo en ese régimen?**
 
-En las 22 corridas donde la búsqueda falló, el evolutivo colocó todas las fichas, con 1.90 s de media, y nunca excedió el límite: se detiene al 90 % del tiempo. Dentro de la rejilla probada no se encontró el punto en que empiece a perder fichas.
+En las 2 corridas donde la búsqueda falló, el evolutivo colocó todas las fichas. El evolutivo no falla en ninguna de las 48 corridas: coloca siempre las M fichas, con tiempos que van de 0.02 s (K ≤ 8) a 9.0 s (K ≥ 12 en tableros grandes).
 
 **Calidad.**
 
-Cuando ambos agentes completan la secuencia, el evolutivo deja igual o menos celdas ocupadas. Con K ≤ 8 llega exactamente a la cota; con N=4, K=12 deja 12.7 celdas contra 15.7 de la búsqueda. En tableros grandes la búsqueda aparenta ocupar menos celdas solo porque colocó pocas fichas, y el concurso ordena primero por fichas colocadas.
+Cuando ambos agentes completan la secuencia, el evolutivo deja consistentemente menos celdas ocupadas: con K ≤ 8 alcanza exactamente K celdas (la cota óptima de una por color), mientras que la búsqueda deja más porque el desempate por profundidad no optimiza fusiones. Por ejemplo, en N=8 K=8 la búsqueda deja 14.3 celdas y el evolutivo 8.0. La diferencia crece con K: en N=10 K=16 la búsqueda deja 52.7 celdas y el evolutivo 16.0.
 
 **Conclusión.**
 
-La búsqueda solo sirve en el régimen pequeño: N ≤ 4 con cualquier K, o N ≤ 8 con K = 4. Fuera de él se corta por tiempo y entrega soluciones casi vacías. El evolutivo escala a toda la rejilla, con un costo que depende sobre todo de K y que queda acotado por el límite de tiempo. Por eso es el agente que conviene presentar al concurso.
+Con el desempate por profundidad, la búsqueda ahora escala a toda la rejilla en fichas colocadas: solo falla en 2 de 48 corridas. Sin embargo, deja más celdas ocupadas que el evolutivo en todos los casos con K ≥ 8. Como el criterio del concurso ordena primero por fichas colocadas y segundo por celdas ocupadas, el evolutivo sigue siendo el agente preferido: iguala a la búsqueda en fichas y la supera en ocupación del tablero.
 
 ## Declaración de IA
 
